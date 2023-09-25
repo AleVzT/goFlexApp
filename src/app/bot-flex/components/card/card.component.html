@@ -1,0 +1,22 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title> {{ user.fullname }} </mat-card-title>
+    <mat-card-subtitle><b>Email:</b> {{ user.email }}<br/>
+      <b>Telefono:</b> {{ user.telefono }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-actions align="end">
+    <button mat-button mat-raised
+      (click)="handleEdit(user)">
+      <mat-icon>edit</mat-icon>Editar
+    </button>
+    <button mat-button mat-raised
+      [ngStyle]="{'color': user.active ? 'green' : 'red' }"
+      (click)="handleChangeState(user)">
+      {{ user.active ? 'Disabled' : 'Enabled'}}
+    </button>
+    <button mat-button mat-raised (click)="handleDelete(user)">
+      <mat-icon>delete</mat-icon>Delete
+    </button>
+  </mat-card-actions>
+</mat-card>
+<app-right-modal *ngIf="isModalOpen" [user]="user" (closeModal)="closeModal()"></app-right-modal>

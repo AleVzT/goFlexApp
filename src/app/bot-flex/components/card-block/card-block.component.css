@@ -1,0 +1,19 @@
+.mat-mdc-card-header-text {
+  width: 100%;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.full-width-header {
+  width: 94%;
+}
+
+.mat-mdc-card-header {
+  display: block;
+}
+
+mat-card-subtitle {
+  margin-top: 10px;
+}

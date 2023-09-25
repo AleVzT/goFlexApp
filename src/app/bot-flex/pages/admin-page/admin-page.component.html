@@ -1,0 +1,15 @@
+<div class="container flex">
+  <h1>User list</h1>
+  <span class="spacer"></span>
+  <button mat-button mat-raised (click)="handleAdd()">add</button>
+</div>
+
+<mat-divider></mat-divider>
+<div class="grid mb-8 pt-2">
+  <div *ngFor="let user of users"
+    class="col-12 sm:col-12 md:col-12 xl:col-12">
+    <users-user-card [user]="user" (updateList)="getUsers()"></users-user-card>
+  </div>
+</div>
+
+<app-right-modal *ngIf="isModalOpen" (closeModal)="closeModal()"></app-right-modal>

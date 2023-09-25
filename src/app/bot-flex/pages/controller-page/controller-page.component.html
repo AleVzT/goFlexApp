@@ -1,0 +1,105 @@
+
+<mat-divider class="mb-2"></mat-divider>
+
+<div class="grid">
+
+  <div class="col-12 sm:col-12">
+    <mat-card>
+      <mat-card-content>
+
+        <form class="grid" [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+
+          <mat-form-field class="col-6">
+            <mat-label>Min hour price</mat-label>
+            <input
+              matInput
+              type="text"
+              required
+              formControlName="minHourPrice"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>Base on</mat-label>
+            <mat-select formControlName="baseOn">
+              <mat-option
+                *ngFor="let base of baseOn"
+                [value]="base.id">
+                  {{ base.desc }}
+                </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="col-12">
+            <mat-label>Start date</mat-label>
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [formControlName]="'startDate'"
+            />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>From time</mat-label>
+            <input
+              matInput
+              type="time"
+              required
+              formControlName="fromTime"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>Max hours block</mat-label>
+            <input
+              matInput
+              type="string"
+              required
+              formControlName="maxHoursBlock"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>Delay (Min)</mat-label>
+            <input
+              matInput
+              type="string"
+              required
+              formControlName="delay"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-6">
+            <mat-label>Start running at</mat-label>
+            <input
+              matInput
+              type="time"
+              required
+              formControlName="startRunningAt"
+            />
+          </mat-form-field>
+
+          <mat-form-field class="col-12">
+            <mat-label>Deposits:</mat-label>
+            <mat-select formControlName="depositos" multiple>
+              <mat-option *ngFor="let option of warehouses" [value]="option.serviceAreaId">
+                {{ option.serviceAreaName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+        <button  (click)="resetForm()" mat-flat-button color="warn" >CANCEL</button>
+        <span class="spacer"></span>
+        <button mat-flat-button color="primary" (click)="onSubmit()">
+          <mat-icon>save</mat-icon>
+          START
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

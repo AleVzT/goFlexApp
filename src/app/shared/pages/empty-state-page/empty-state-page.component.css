@@ -1,0 +1,17 @@
+/* empty-state.component.css */
+.empty-state {
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-state img {
+  max-width: 200px;
+}
+
+.empty-state h2 {
+  font-size: 24px;
+}
+
+.empty-state p {
+  font-size: 16px;
+}

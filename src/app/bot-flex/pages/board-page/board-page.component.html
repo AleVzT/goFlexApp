@@ -1,0 +1,23 @@
+<div class="container flex">
+  <h1>Board block</h1>
+</div>
+
+<mat-divider></mat-divider>
+<ng-container *ngIf="loading; else content">
+  <ngx-skeleton-loader
+    count="5"
+    [theme]="{ 'margin-top': '15px', height: '100px' }"
+  ></ngx-skeleton-loader>
+</ng-container>
+
+<ng-template #content>
+  <div *ngIf="offersList.length === 0">
+    <app-empty-state></app-empty-state>
+  </div>
+  <div *ngIf="offersList.length !== 0" class="grid mb-8 pt-2">
+    <div *ngFor="let offer of offersList"
+      class="col-12 sm:col-12 md:col-12 xl:col-12">
+      <block-card [offerObject]="offer"></block-card>
+    </div>
+  </div>
+</ng-template>

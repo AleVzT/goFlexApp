@@ -1,0 +1,82 @@
+<div class="modal-container">
+  <div class="modal-content">
+    <h1>
+      {{ user ? 'Editar' : 'Agregar' }}
+      Usuario
+      <small *ngIf="user">{{ user.fullname }}</small>
+    </h1>
+    <mat-divider class="mb-2"></mat-divider>
+
+    <div class="grid">
+
+      <div class="col-12 sm:col-12">
+        <mat-card>
+          <mat-card-content>
+
+            <form class="grid" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+              <mat-form-field class="col-12">
+                <mat-label>Full Name</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  required
+                  formControlName="fullname"
+                />
+              </mat-form-field>
+
+              <mat-form-field class="col-12">
+                <mat-label>Email</mat-label>
+                <input
+                  matInput
+                  type="mail"
+                  required
+                  formControlName="email"
+                />
+              </mat-form-field>
+
+              <mat-form-field class="col-12">
+                <mat-label>Contraseña</mat-label>
+                <input
+                  matInput
+                  type="password"
+                  required
+                  formControlName="password"
+                />
+              </mat-form-field>
+
+              <mat-form-field class="col-12">
+                <mat-label>Telefono</mat-label>
+                <input
+                  matInput
+                  type="string"
+                  required
+                  formControlName="telefono"
+                />
+              </mat-form-field>
+
+              <mat-form-field class="col-12">
+                <mat-label>Url de homologación</mat-label>
+                <textarea matInput placeholder="Pegar aqui la URL" formControlName="comment" required></textarea>
+              </mat-form-field>
+              <a href="https://www.amazon.com/ap/signin?ie=UTF8&clientContext=134-9172090-0857541&openid.pape.max_auth_age=0&use_global_authentication=false&accountStatusPolicy=P1&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&use_audio_captcha=false&language=en_US&pageId=amzn_device_na&arb=97b4a0fe-13b8-45fd-b405-ae94b0fec45b&openid.return_to=https%3A%2F%2Fwww.amazon.com%2Fap%2Fmaplanding&openid.assoc_handle=amzn_device_na&openid.oa2.response_type=token&openid.mode=checkid_setup&openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&openid.ns.oa2=http%3A%2F%2Fwww.amazon.com%2Fap%2Fext%2Foauth%2F2&openid.oa2.scope=device_auth_access&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&disableLoginPrepopulate=0&openid.oa2.client_id=device%3A32663430323338643639356262653236326265346136356131376439616135392341314d50534c4643374c3541464B"
+                rel="noopener noreferrer"
+                target="_blank"
+              >Para obtener la URL</a>
+            </form>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-flat-button color="warn" (click)="onCloseModal()">BACK</button>
+            <span class="spacer"></span>
+            <button mat-flat-button color="primary"  (click)="onSubmit()">
+              <mat-icon>save</mat-icon>
+              SAVE
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+
