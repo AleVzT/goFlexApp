@@ -123,13 +123,12 @@ export class ControllerPageComponent implements OnInit  {
 
       // Verifica si hay ofertas aceptadas en la respuesta y las almacena
       if (response.offersAccept && Array.isArray(response.offersAccept.offer)) {
-        this.ofertasAceptadas = response.offersAccept.offer;
+        this.ofertasAceptadas =  this.ofertasAceptadas.concat(response.offersAccept.offer);
       }
     });
   }
 
   resetForm() {
-    /* this.filterForm.reset(); */
     this.flexServices.detenerLlamadasRepetidas();
   }
 

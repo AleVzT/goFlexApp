@@ -10,9 +10,8 @@ import { AuthServices } from '../../auth/services/auth.service';
 export class FlexServices {
   private baseUrl: string = environments.baseUrl;
   private llamadasEnProgresoSubject = new BehaviorSubject<boolean>(false);
-  llamadasEnProgreso$ = this.llamadasEnProgresoSubject.asObservable();
-
   private unsubscribe$ = new Subject<void>();
+  llamadasEnProgreso$ = this.llamadasEnProgresoSubject.asObservable();
 
   constructor(
     private http: HttpClient,
@@ -39,6 +38,7 @@ export class FlexServices {
   }
 
   realizarLlamadasHastaResultadoDeseado(filters: any): Observable<any> {
+    const unsubscribe$ = new Subject<void>();
     this.llamadasEnProgresoSubject.next(true);
 
     return interval(2000).pipe(
@@ -50,8 +50,8 @@ export class FlexServices {
       }),
       finalize(() => {
         this.llamadasEnProgresoSubject.next(false);
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
+        unsubscribe$.next();
+        unsubscribe$.complete(); // Completa el unsubscribe$ actual
       })
     );
   }
