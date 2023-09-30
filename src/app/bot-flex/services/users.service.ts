@@ -1,24 +1,26 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environments } from '../../../environments/environments';
-import { Observable, catchError, of, map } from "rxjs";
+import { Observable, catchError, of, map, BehaviorSubject } from 'rxjs';
 import { User } from "../interfaces/user.interface";
 
 @Injectable({providedIn: 'root'})
 export class UserServices {
 
   private baseUrl: string = environments.baseUrl;
+  private usersSubject = new BehaviorSubject<User[]>([]);
+  users$ = this.usersSubject.asObservable();
   
   constructor(private http: HttpClient) { }
 
-  getUsers(): Observable<User[]> {
-    const url = `${ this.baseUrl}/users`;
+  getUsers(): void  {
+    const url = `${this.baseUrl}/users`;
     const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('x-token', `${token}`);
 
-    const headers = new HttpHeaders()
-      .set('x-token', `${ token }`);
-
-    return this.http.get<User[]>( url, { headers })
+    this.http.get<User[]>(url, { headers }).subscribe((users) => {
+      this.usersSubject.next(users);
+    });
   }
 
   getUsersById( id: string ): Observable<User|undefined> {

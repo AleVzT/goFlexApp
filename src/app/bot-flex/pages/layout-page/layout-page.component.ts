@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 export class LayoutPageComponent {
 
   public sidebarItems = [
-    { label: 'Board', icon: 'dashboard', url: './board' },
+    // { label: 'Board', icon: 'dashboard', url: './board' },
     { label: 'Controller', icon: 'view_list', url: './controller' },
     { label: 'Admin', icon: 'settings', url: './admin' },
   ];

@@ -35,8 +35,8 @@ export class CardComponent implements OnInit {
     this.userServices.updateUser(customerUser)
     .subscribe( resp => {
       this.showSnackBar(`${ user.fullname } update!` )
+      this.updateList.emit();
     });
-    this.updateList.emit();
   }
 
   handleEdit(user: User): void {
@@ -47,12 +47,12 @@ export class CardComponent implements OnInit {
     this.userServices.deleteUserById(user._id)
       .subscribe( resp => {
         if (resp) {
-          this.showSnackBar(`Usuario ${ user.fullname } Eliminado!` )
+          this.showSnackBar(`User ${ user.fullname } removed!` )
         } else {
-          this.showSnackBar(`Error al intentar eliminar el usuario!` )
+          this.showSnackBar(`Error when trying to delete user!` )
         }
+        this.updateList.emit();
       });
-    this.updateList.emit();
   }
 
   closeModal() {

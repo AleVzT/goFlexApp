@@ -1,18 +1,18 @@
 import { Injectable, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environments } from '../../../environments/environments';
-import { Observable, Subject, interval, catchError, throwError } from 'rxjs';
+import { Observable, Subject, interval, catchError, throwError, BehaviorSubject } from 'rxjs';
 import { takeUntil, mergeMap, takeWhile, finalize } from 'rxjs/operators';
 import { WareHouse, Offers } from '../interfaces/block.interface';
 import { AuthServices } from '../../auth/services/auth.service';
 
 @Injectable({providedIn: 'root'})
 export class FlexServices {
-  private unsubscribe$ = new Subject<void>();
   private baseUrl: string = environments.baseUrl;
-  public llamadasEnProgreso = false;
-  
+  private llamadasEnProgresoSubject = new BehaviorSubject<boolean>(false);
+  llamadasEnProgreso$ = this.llamadasEnProgresoSubject.asObservable();
 
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
@@ -39,27 +39,26 @@ export class FlexServices {
   }
 
   realizarLlamadasHastaResultadoDeseado(filters: any): Observable<any> {
-    if( this.llamadasEnProgreso) {
-      this.detenerLlamadasRepetidas();
-    }
-    this.llamadasEnProgreso = true;
-
-    // return this.getOffersWithFilters(filters);
+    this.llamadasEnProgresoSubject.next(true);
 
     return interval(2000).pipe(
       takeUntil(this.unsubscribe$),
-      mergeMap(() => this.getOffersWithFilters(filters))
-    ).pipe(
-      takeUntil(this.unsubscribe$),
+      mergeMap(() => this.getOffersWithFilters(filters)),
+      catchError((error) => {
+        console.error('Error en la solicitud HTTP:', error);
+        return throwError(error);
+      }),
       finalize(() => {
-        this.llamadasEnProgreso = false;
+        this.llamadasEnProgresoSubject.next(false);
         this.unsubscribe$.next();
         this.unsubscribe$.complete();
       })
     );
   }
 
-
+  detenerLlamadasRepetidas() {
+    this.unsubscribe$.next();
+  }
 
   getOffersWithFilters(filters: any): Observable<{ ok: boolean; msj: string }> {
     const url = `${ this.baseUrl}/fish/processOffer`;
@@ -84,12 +83,6 @@ export class FlexServices {
         return throwError(error);
       })
     );
-  }
-
-  detenerLlamadasRepetidas() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-    this.llamadasEnProgreso = false;
   }
 
 }

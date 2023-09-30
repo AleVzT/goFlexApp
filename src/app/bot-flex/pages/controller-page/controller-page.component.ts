@@ -14,6 +14,8 @@ import { catchError } from 'rxjs';
   ]
 })
 export class ControllerPageComponent implements OnInit  {
+  ofertas: any[] = [];
+  ofertasAceptadas: any[] = [];
 
   public filterForm = new FormGroup({
     minHourPrice: new FormControl<number>(0),
@@ -46,10 +48,10 @@ export class ControllerPageComponent implements OnInit  {
 
   ngOnInit(): void {
     this.getService();
-    const loading = this.flexServices.llamadasEnProgreso;
+/*     const loading = this.flexServices.llamadasEnProgreso;
     if(loading) {
       this.showSnackBar('You already have a search in progress, if you configure a new one the previous one is deleted!');
-    }
+    } */
   }
 
   getService(): void {
@@ -69,14 +71,65 @@ export class ControllerPageComponent implements OnInit  {
     })
   }
 
+  getStatusStyle(oferta: any): any {
+    if (this.ofertasAceptadas !== undefined) {
+      const ofertaAceptada = this.ofertasAceptadas.find(
+        aceptada => aceptada.id === oferta.offerId
+      );
+      if (ofertaAceptada) {
+        return {
+          color: '#28a745',
+          padding: '5px 10px',
+          'border-radius': '5px'
+        };
+      }
+    }
+    return {
+      color: '#dc3545',
+      padding: '5px 10px',
+      'border-radius': '5px'
+    };
+  }
+
+  getStatusText(oferta: any): string[] {
+    const resultados: string[] = [];
+  
+    if (this.ofertasAceptadas !== undefined && Array.isArray(this.ofertasAceptadas)) {
+      this.ofertasAceptadas.forEach(aceptada => {
+        if (aceptada.id === oferta.offerId) {
+          resultados.push('Accepted');
+        }
+      });
+    }
+  
+    if (resultados.length === 0) {
+      resultados.push('Rejected');
+    }
+  
+    return resultados;
+  }
+
   onSubmit(): void {
     this.flexServices.realizarLlamadasHastaResultadoDeseado(this.currentFilter)
-      .subscribe(() => console.log(),
-      (error) => this.showSnackBar('You already have a search in progress, if you configure a new one the previous one is deleted!'));
+      .subscribe((response) => {
+       // Verifica si hay ofertas en la respuesta y las almacena
+       if (response.offersList) {
+        // Filtra duplicados y actualiza el listado de ofertas
+        const nuevasOfertas = response.offersList.filter((oferta: { offerId: any; }) => 
+          !this.ofertas.find(o => o.offerId === oferta.offerId)
+        );
+        this.ofertas = this.ofertas.concat(nuevasOfertas);
+      }
+
+      // Verifica si hay ofertas aceptadas en la respuesta y las almacena
+      if (response.offersAccept && Array.isArray(response.offersAccept.offer)) {
+        this.ofertasAceptadas = response.offersAccept.offer;
+      }
+    });
   }
 
   resetForm() {
-    this.filterForm.reset(); // Esto limpiará todos los campos del formulario
+    /* this.filterForm.reset(); */
     this.flexServices.detenerLlamadasRepetidas();
   }
 
