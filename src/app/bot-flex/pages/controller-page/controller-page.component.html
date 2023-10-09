@@ -102,69 +102,41 @@
       </mat-card-actions>
     </mat-card>
   </div>
-    <div class="col-12 sm:col-12">
-      <mat-card>
-        <mat-card-content>
-          <div style="overflow-x: auto;">
-            <ng-container *ngIf="ofertas.length > 0; else emptyState">
-              <table style="width: 100%; table-layout: fixed;">
-                <thead>
-                  <tr>
-                    <th>schedule</th>
-                    <th>block hour</th>
-                    <th>block price</th>
-                    <th>date</th>
-                    <th>action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let oferta of ofertas" style="text-align: center;">
-                    <td>{{ oferta.startTime | time }} - {{ oferta.endTime | time }}</td>
-                    <td>{{ oferta.startTime | timeDifference: oferta.endTime }}</td>
-                    <td>{{ oferta.rateInfo.priceAmount }} {{ oferta.rateInfo.currency }}</td>
-                    <td>{{ oferta.startTime | customDate }}</td>
-                    <td>
-                      <span [ngStyle]="getStatusStyle(oferta)">
-                        {{ getStatusText(oferta) }}
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </ng-container>
-            <ng-template #emptyState>
-              <p>There are no offers available at this time.</p>
-            </ng-template>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-    
-  
-  
-  
-  <!-- <div class="col-12 sm:col-12">
+  <div class="col-12 sm:col-12">
     <mat-card>
       <mat-card-content>
-        <mat-list>
-          <mat-list-item *ngFor="let oferta of ofertas">
-            <div fxLayout="row" fxLayoutAlign="space-between">
-              <div style="display: inline-flex;">
-                <p style="margin-right: 20px;">{{ oferta.startTime | time }} - {{ oferta.endTime | time }}</p>
-                <p style="margin-right: 20px;">{{ oferta.startTime | timeDifference: oferta.endTime }}</p>
-                <p style="margin-right: 20px;">{{ oferta.rateInfo.priceAmount }} {{ oferta.rateInfo.currency }}</p>
-                <p class="text-right">{{ oferta.startTime | customDate }}</p>
-                <span *ngIf="oferta.offerId === ofertaAceptada.offer.id" style=" background-color: #28a745;
-                color: #fff;
-                padding: 5px 10px;
-                margin-right: 10px;
-                border-radius: 5px;">Aceptada</span>
-                <span *ngIf="oferta.offerId !== ofertaAceptada.offer.id" class="badge badge-warining">Rejected</span>
-              </div>
-            </div>
-          </mat-list-item>
-        </mat-list>
+        <div style="overflow-x: auto;">
+          <ng-container *ngIf="ofertas.length > 0; else emptyState">
+            <table style="width: 100%; table-layout: fixed;">
+              <thead>
+                <tr>
+                  <th>schedule</th>
+                  <th>block hour</th>
+                  <th>block price</th>
+                  <th>date</th>
+                  <th>action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let oferta of ofertas" style="text-align: center;">
+                  <td>{{ oferta.startTime | time }} - {{ oferta.endTime | time }}</td>
+                  <td>{{ oferta.startTime | timeDifference: oferta.endTime }}</td>
+                  <td>{{ oferta.blockRate }} $</td>
+                  <td>{{ oferta.startTime | customDate }}</td>
+                  <td>
+                    <span [ngStyle]="getStatusStyle(oferta)">
+                      {{oferta.status}}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #emptyState>
+            <p>There are no offers available at this time.</p>
+          </ng-template>
+        </div>
       </mat-card-content>
     </mat-card>
-  </div> -->
+  </div>
 </div>

@@ -4,7 +4,7 @@ import { FlexServices } from '../../services/flex.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BaseOn } from '../../interfaces/user.interface';
 import { WareHouse } from '../../interfaces/block.interface';
-import { catchError } from 'rxjs';
+import { catchError, Subscription, interval, switchMap } from 'rxjs';
 
 
 @Component({
@@ -15,7 +15,8 @@ import { catchError } from 'rxjs';
 })
 export class ControllerPageComponent implements OnInit  {
   ofertas: any[] = [];
-  ofertasAceptadas: any[] = [];
+  private subscription: Subscription;
+  private serviceCalled = false;
 
   public filterForm = new FormGroup({
     minHourPrice: new FormControl<number>(0),
@@ -48,17 +49,18 @@ export class ControllerPageComponent implements OnInit  {
 
   ngOnInit(): void {
     this.getService();
-/*     const loading = this.flexServices.llamadasEnProgreso;
-    if(loading) {
-      this.showSnackBar('You already have a search in progress, if you configure a new one the previous one is deleted!');
-    } */
+    const wasServiceCalled = localStorage.getItem('serviceCalled');
+    if (wasServiceCalled === 'true') {
+      this.serviceCalled = true;
+      this.getOffersList();
+    }
   }
 
   getService(): void {
     this.flexServices.getServiceAll()
       .pipe(
         catchError( error => {
-          this.showSnackBar(error.error.error);
+        /*   this.showSnackBar(error.error.error); */
           return [];
         })
       )
@@ -71,65 +73,71 @@ export class ControllerPageComponent implements OnInit  {
     })
   }
 
-  getStatusStyle(oferta: any): any {
-    if (this.ofertasAceptadas !== undefined) {
-      const ofertaAceptada = this.ofertasAceptadas.find(
-        aceptada => aceptada.id === oferta.offerId
-      );
-      if (ofertaAceptada) {
-        return {
-          color: '#28a745',
-          padding: '5px 10px',
-          'border-radius': '5px'
-        };
-      }
+  getStatusStyle(data: any): any {
+    if (data.status === 'accepted') {
+      return {
+        color: '#28a745',
+        padding: '5px 10px',
+        'border-radius': '5px'
+      };
+    } else if (data.status === 'refused') {
+      return {
+        color: '#dc3545',
+        padding: '5px 10px',
+        'border-radius': '5px'
+      };
     }
     return {
-      color: '#dc3545',
+      // Estilo predeterminado
       padding: '5px 10px',
       'border-radius': '5px'
     };
   }
 
-  getStatusText(oferta: any): string[] {
-    const resultados: string[] = [];
-  
-    if (this.ofertasAceptadas !== undefined && Array.isArray(this.ofertasAceptadas)) {
-      this.ofertasAceptadas.forEach(aceptada => {
-        if (aceptada.id === oferta.offerId) {
-          resultados.push('Accepted');
-        }
-      });
-    }
-  
-    if (resultados.length === 0) {
-      resultados.push('Rejected');
-    }
-  
-    return resultados;
-  }
-
   onSubmit(): void {
-    this.flexServices.realizarLlamadasHastaResultadoDeseado(this.currentFilter)
-      .subscribe((response) => {
-       // Verifica si hay ofertas en la respuesta y las almacena
-       if (response.offersList) {
-        // Filtra duplicados y actualiza el listado de ofertas
-        const nuevasOfertas = response.offersList.filter((oferta: { offerId: any; }) => 
-          !this.ofertas.find(o => o.offerId === oferta.offerId)
-        );
-        this.ofertas = this.ofertas.concat(nuevasOfertas);
-      }
-
-      // Verifica si hay ofertas aceptadas en la respuesta y las almacena
-      if (response.offersAccept && Array.isArray(response.offersAccept.offer)) {
-        this.ofertasAceptadas =  this.ofertasAceptadas.concat(response.offersAccept.offer);
-      }
+    this.flexServices.getOffersWithFilters(this.currentFilter)
+      .subscribe((response: any) => {
+        this.showSnackBar(response.msj);
+        this.serviceCalled = true;
+        localStorage.setItem('serviceCalled', 'true');
+        this.getOffersList();
+      }, (err) => {
+        this.showSnackBar(err.error.msj);
     });
   }
 
+  getOffersList() {
+    this.subscription = interval(4000) // 4000ms = 4 segundos
+      .pipe(
+        switchMap(() => this.flexServices.getOffersList())
+      )
+      .subscribe(
+        (response: any) => {
+          this.ofertas = response;
+        },
+        (err) => {
+          this.showSnackBar(err.error.msj);
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    // Cancela la suscripción al destruir el componente
+    this.subscription.unsubscribe();
+  }
+
   resetForm() {
-    this.flexServices.detenerLlamadasRepetidas();
+    this.flexServices.getStopSearchOffers()
+      .subscribe((response: any) => {
+        this.showSnackBar(response.msj);
+        localStorage.removeItem('serviceCalled');
+        this.ngOnDestroy();
+      },
+      (err) => {
+        this.showSnackBar(err.error.msj);
+        localStorage.removeItem('serviceCalled');
+      }
+    );
   }
 
 }
