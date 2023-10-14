@@ -122,8 +122,10 @@ export class ControllerPageComponent implements OnInit  {
   }
 
   ngOnDestroy() {
-    // Cancela la suscripción al destruir el componente
-    this.subscription.unsubscribe();
+     // Verifica si la suscripción existe antes de intentar desuscribirte
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   resetForm() {
